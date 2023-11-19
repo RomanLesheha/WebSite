@@ -1,0 +1,193 @@
+﻿@using WebSite.Interfaces
+@model WebSite.Models.Product
+@inject IUserRealization _user;
+@{
+    ViewData["Title"] = "Details";
+    var isUserExist = _user.GetUserId();
+    var products = _user.GetLastVisitedUsersProducts().Result;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebProject</title>
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/details.css" asp-append-version="true" />
+    <script src="sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="sweetalert2.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="detail_container mt-4 mb-4 ">
+            <div class="detail_photo">
+                <img src="@Model.Photo" id="productImage">
+            </div>
+
+            <div id="myModal" class="modal">
+                <span class="close" id="closeModal">&times;</span>
+                <img src="" id="modalImage">
+            </div>
+            <div class="detail_info">
+                <h3>@Model.Name</h3>
+                <div style="display: flex;">
+
+                    @if (Model.DiscountedPrice != null)
+                    {
+                        <p class="original-price" style="margin-right: 10%;">@Model.Price ₴</p>
+                        <p class="discounted-price">@Model.DiscountedPrice ₴</p>
+                    }else{
+                        <p class="discounted-price" style="margin-right: 10%;">@Model.Price ₴</p>
+                    }
+
+                </div>
+                <div class="sizes-block">
+                    <h3>Розміри:</h3>
+                    <ul class="size-list">
+                        @foreach (var variant in Model.Variants)
+                        {
+                            <li>
+                                <button class="size-button" data-size="@variant.Size.ToString()" data-quantity="@variant.Quantity">
+                                    @variant.Size.ToString() <sup class="quantity">@variant.Quantity</sup>
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="description_block">
+                    <a id="showMoreBtn">▼ Детальніше ▼</a>
+                    <div class="description-content">
+                        <p class="description-text">@Model.Description</p>
+                    </div>
+                   
+                </div>
+                <button type="button" data-user="@isUserExist" data-size="" onclick="add(@Model.Id)" class="btn btn-primary" id="addToCartButton">Add to cart</button>
+            </div>
+
+        </div>
+
+       
+    </div>
+    <style>
+        .selected {
+            background-color: #ccc; /* Колір, який позначає виділений елемент */
+            color: red; /* Колір тексту для підсвіченого елементу */
+            /* Інші стилі, які ви хочете застосувати до виділеного елементу */
+        }
+    </style>
+
+    <script>
+        var productImage = document.getElementById("productImage");
+        var modal = document.getElementById("myModal");
+        var modalImage = document.getElementById("modalImage");
+        var closeModal = document.getElementById("closeModal");
+       
+
+        // Відкрити модальне вікно при кліку на зображенні
+        productImage.addEventListener("click", function () {
+            modal.style.display = "block";
+            modalImage.src = this.src;
+        });
+
+        // Закрити модальне вікно при кліку на хрестик
+        closeModal.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        // Закрити модальне вікно при кліку поза ним
+        window.addEventListener("click", function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        });
+
+
+        // Отримайте посилання на кнопку та блок опису
+        var showMoreBtn = document.getElementById("showMoreBtn");
+        var descriptionContent = document.querySelector(".description-content");
+
+        var isExpanded = false;
+
+        // По кліку на кнопку розгортайте або згортайте текст опису
+        showMoreBtn.addEventListener("click", function () {
+            isExpanded = !isExpanded;
+
+            if (isExpanded) {
+                descriptionContent.style.maxHeight = "fit-content";
+                showMoreBtn.textContent = "▲ Менше ▲";
+            } else {
+                descriptionContent.style.maxHeight = "4em"; // Встановіть бажану обмежену висоту для 3 рядків тексту
+                showMoreBtn.textContent = "▼ Детальніше ▼";
+            }
+        });
+
+        var sizeButtons = document.querySelectorAll('button[data-size]');
+        var addToCartButton = document.getElementById("addToCartButton");
+        // Змінна для збереження вибраного розміру
+        var selectedSize = null;
+
+        // Функція для обробки кліку на кнопку розміру
+        function handleSizeButtonClick(event) {
+            // Заберіть дані розміру з кнопки
+            var size = event.target.getAttribute('data-size');
+
+            if (size === selectedSize) {
+                // Якщо вибраний розмір вже був вибраний, зніміть виділення
+                event.target.classList.remove('selected');
+                selectedSize = null;
+            } else {
+                // Зніміть виділення з попереднього вибраного розміру, якщо є
+                if (selectedSize) {
+                    var previouslySelectedButton = document.querySelector('button[data-size="' + selectedSize + '"]');
+                    if (previouslySelectedButton) {
+                        previouslySelectedButton.classList.remove('selected');
+                    }
+                }
+
+                // Виділіть вибраний розмір і збережіть його в selectedSize
+                event.target.classList.add('selected');
+                selectedSize = size;
+            }
+        }
+
+        // Додайте обробку подій для кожної кнопки розміру
+        sizeButtons.forEach(function (button) {
+            button.addEventListener('click', handleSizeButtonClick);
+        });
+
+        async function add(ProductID) {
+            if (selectedSize) {
+                var dataUserValue = $("button[data-user]").data("user");
+                if (dataUserValue == null) {
+                    window.location.href = "/Identity/Account/Login";
+
+                }
+                try {
+                    var response = await fetch(`/Cart/AddItem?ProductID=${ProductID}&size=${selectedSize}`);
+                    if (response.status == 200) {
+                        var result = await response.json();
+                        var cartCountEl = document.getElementById("cartCount");
+                        cartCountEl.innerHTML = result;
+                        window.location.href = "#cartCount";
+                    }
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Виберіть спочатку розмір одягу, щоб добавити його в корзину',
+                    icon: 'warning',
+                    confirmButtonText: 'OK!'
+                })
+            }
+
+            
+        }
+    </script>
+</body>
+</html>
+                       

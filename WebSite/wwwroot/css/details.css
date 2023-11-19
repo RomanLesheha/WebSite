@@ -1,0 +1,139 @@
+﻿.detail_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 80vh;
+    margin-bottom: 30px;
+}
+
+.detail_photo {
+    width: 30%; /* Задайте бажану ширину для фотографії */
+    height: 50vh;
+}
+
+    .detail_photo img {
+        border-radius: 20px;
+        max-width: 100%;
+        height: auto;
+    }
+
+.detail_info {
+    flex: 1;
+    margin-left: 20px; /* Додайте бажаний відступ між фотографією та інформацією */
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+
+    .modal img {
+        display: block;
+        max-width: 90%;
+        max-height: 90%;
+        margin: 0 auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: white;
+}
+.description_block {
+    flex-grow: 1; /* Розтягуємо .description_block, щоб він займав доступний залишок місця */
+    margin-bottom: 20px;
+}
+.description-content {
+    max-height: 4em; /* Встановіть бажану обмежену висоту (наприклад, 3 рядки тексту) */
+    overflow: hidden;
+    padding: 10px; /* Додайте бажаний відступ і стилізацію для внутрішнього контенту */
+}
+
+
+/* Стилі для блоку з розмірами одягу */
+.sizes-block {
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+
+/* Стилі для списку розмірів і кількостей */
+.size-list {
+    list-style: none;
+    padding: 0;
+    display: flex; /* Зробити всі розміри в одному ряду */
+    flex-wrap: wrap; /* Переносити рядок, якщо не поміщається */
+}
+
+    /* Стилі для елементів списку */
+    .size-list li {
+        display: inline-block; /* Вирівнюємо елементи в рядок */
+        margin-right: 10px; /* Додаємо відступ між елементами для кращого вигляду */
+        padding: 5px 10px; /* Додаємо внутрішній відступ для кращого вигляду */
+        background-color: #ccc; /* Задаємо фоновий колір */
+        border-radius: 5px; /* Закруглюємо кути */
+    }
+
+        .size-list li button {
+            background-color: inherit;
+            border: none;
+        }
+
+        /* Стилі для кількості елементів */
+        .size-list li .quantity {
+            font-size: 0.8em; /* Зменшуємо розмір шрифту для кількості */
+            margin-left: 5px; /* Додаємо відступ перед кількістю */
+        }
+
+@media (max-width: 768px) {
+    .detail_container {
+        flex-direction: column; /* Змінюємо напрямок на колонку */
+        min-height: auto; /* Мінімальна висота */
+    }
+    .detail_photo {
+        width: 50%;
+        height: auto; /* Автоматична висота для фотографії */
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+    .detail_info {
+        width: 100%;
+        margin-left: 20px; /* Додайте бажаний відступ між фотографією та інформацією */
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .detail_container {
+        flex-direction: column; /* Змінюємо напрямок на колонку */
+        min-height: auto; /* Мінімальна висота */
+    }
+    .description_block {
+        flex-grow: 1; /* Розтягуємо .description_block, щоб він займав доступний залишок місця */
+        margin-bottom: 20px;
+    }
+
+    .detail_photo {
+        width: 100%;
+        height: auto; /* Автоматична висота для фотографії */
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+}

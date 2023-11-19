@@ -1,0 +1,179 @@
+﻿@model ShoppingCart
+@{
+    ViewData["Title"] = "GetUserCart";
+}
+<head>
+    <script src="sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="sweetalert2.min.css">
+</head>
+<body>
+    <div class="mt-2">
+        @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Category</th>
+                        <th>Product Size</th>
+                        <th>Unit Price (INR)</th>
+                        <th>Total Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartDetails)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            @if (string.IsNullOrEmpty(item.Product.Photo))
+                            {
+                                <td>
+                                    <img src="/images/NoImage.png" style="width:80px;height:100px" alt="No Image" />
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <img src="@item.Product.Photo" style="width:80px;height:100px" alt="Product Image" />
+                                </td>
+                            }
+                            <td>@item.Product.Category.Name</td>
+                            <td>@item.ProductSize</td>
+                            <td>
+                                @if (@item.Product.DiscountedPrice.HasValue)
+                                {
+                                    @(item.Product.DiscountedPrice)
+                                }
+                                else
+                                {
+                                    @(item.Product.Price)
+                                }
+                            </td>
+                            <td>
+                                @if (@item.Product.DiscountedPrice.HasValue)
+                                {
+                                     @(item.Product.DiscountedPrice * item.Quantity)
+                                }
+                                else
+                                {
+                                    @(item.Product.Price * item.Quantity)
+                                }
+                            </td>
+                            <td>
+                                <a class="btn btn-info" href="/Cart/AddItem?ProductID=@item.Product.Id&&size=@item.ProductSize&&redirect=1">+</a>
+                                <a class="btn btn-info" href="/Cart/RemoveItem?ProductID=@item.Product.Id">-</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="my-2">
+                <h5>Total (INR): </h5>
+                @(Model.CartDetails.Select(item => (item.Product.DiscountedPrice ?? item.Product.Price) * item.Quantity).Sum())
+            </div>
+
+            <div style="text-align:center;">
+                <button id="openModalBtn" class="btn btn-primary">ОФОРМИТИ ЗАМОВЛЕННЯ</button>
+            </div>
+        }
+        else
+        {
+            <script>
+                Swal.fire({
+                    text: 'Корзина пуста, спочатку добавте щось',
+                    icon: 'info',
+                    confirmButtonText: 'OK!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect the user to the desired page
+                        window.location.href = '/';
+                    }
+                });
+            </script>
+        }
+    </div>
+    <partial name="Order" model="new Order()">
+
+   
+
+    
+</body>
+<style>
+    .text-center {
+        text-align: center;
+    }
+
+    .form-center {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        margin: 0 auto;
+        border: 1px solid black;
+        border-radius:30px;
+        padding:30px;
+    }
+
+    .mt-2 {
+        margin-top: 2rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 50%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+<script>
+    // Get the modal and buttons
+    var modal = document.getElementById("orderModal");
+    var openModalBtn = document.getElementById("openModalBtn");
+    var closeModalBtn = document.getElementById("closeModalBtn");
+
+    // Open the modal
+    openModalBtn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // Close the modal
+    closeModalBtn.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // Close the modal if the user clicks outside the modal content
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

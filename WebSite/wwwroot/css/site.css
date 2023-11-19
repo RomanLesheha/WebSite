@@ -1,0 +1,267 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+/* Main page*/
+.full-width-container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.background-section {
+    background-image: linear-gradient(rgba(0, 0, 255, 0.5), rgba(255, 255, 0, 0.5)), url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 90vh;
+    width: 100%;
+}
+
+.product-section {
+    background-color: rgb(209,209,209, 0.37)
+}
+
+.text-container {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 66px;
+}
+
+.text-container span {
+    border-bottom: 1px solid #000; /* Колір та стиль лінії можна налаштувати за потреби */
+}
+
+.text-block {
+    text-align: center;
+    max-width: 80%;
+    line-height: 1.5;
+}
+
+    .text-block h1 {
+        font-size: 96px;
+        color: white;
+        font-weight: 900;
+    }
+
+.btn_container a {
+    width: auto;
+    height: auto;
+    border: 1px solid white;
+    border-radius: 10px;
+    background: none;
+    font-size: 46px;
+    color: white;
+    line-height: 1.5;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+}
+
+    .btn_container a:hover {
+        font-size: 49px;
+        box-shadow: 24px 19px 38px -16px rgba(255,255,255,1);
+    }
+/**/
+
+.product-card {
+    border: 1px solid #ccc;
+    margin: 10px;
+    width: 300px;
+    height: 400px;
+    display: inline-block;
+    vertical-align: top;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%; /* Займати 100% ширини блоку */
+    height: 50%; /* Займати 100% висоти блоку */
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%; /* Займати 100% ширини блоку */
+    height: 100%; /* Займати 100% висоти блоку */
+    object-fit: cover; /* Масштабувати збігаючи за розміром блоку, зберігаючи співвідношення сторін */
+    object-position: center; /* Вирівнювати фотографію по центру блоку */
+}
+
+.product-card:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.produnt-info {
+    max-width: 100%;
+    height: 40%; /* Set the image height to 50% of the product-card height */
+    position: relative; /* Add this to enable absolute positioning */
+    overflow: hidden;
+}
+
+.product-name {
+    font-weight: bold;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-description {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-height: 3em;
+    overflow: hidden;
+}
+
+.product-price {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.original-price {
+    font-size: 15px;
+    text-decoration: line-through;
+    font-weight: normal;
+    color: grey;
+}
+
+.discounted-price {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.discount-badge {
+    position: relative; /* Позиціонуємо відносно батьківського блоку */
+}
+
+.discount-text {
+    background-color: red; /* Червоний фон */
+    color: white; /* Білий текст */
+    font-style: oblique; /* Похилий текст */
+    padding: 5px 25px; /* Запаси для тексту */
+    transform: rotate(-45deg); /* Нахил тексту на -45 градусів */
+    transform-origin: left bottom; /* Початкова точка обертання */
+    position: absolute; /* Абсолютне позиціонування */
+    left: 0; /* Ліво від батьківського блоку */
+    top: 50px; /* Верх від батьківського блоку */
+    z-index: 1; /* Піднімаємо над іншими елементами */
+}
+
+.products {
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap; /* Замість grid використовуємо flex зі своєю кількістю стовпців */
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    text-align: center;
+}
+
+@media (max-width: 1200px) {
+    .products {
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+    }
+
+    .product-card {
+        width: 400px;
+        height: 450px;
+    }
+
+    .product-image {
+        height: 55%;
+    }
+
+    .produnt-info {
+        height: 35%;
+    }
+
+    .product-name .product-description {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 993px) {
+    .products {
+        grid-template-columns: 1fr 1fr;
+        padding-bottom: 15px;
+        min-height: 150px;
+        gap: 30px;
+    }
+    .product-card {
+        width: 300px;
+        height: 450px;
+    }
+   
+}
+
+@media (max-width: 768px) {
+    .text-block h1 {
+        font-size: 50px;
+    }
+    btn_container a {
+        font-size: 36px;
+    }
+    .text-container {
+        font-size: 46px;
+    }
+    btn_container a :hover {
+        font-size: 39px;
+    }
+    .products {
+        grid-template-columns: 1fr;
+        padding-bottom: 15px;
+        min-height: 150px;
+        gap: 50px;
+    }
+
+    .product-card {
+
+        width: 420px;
+        height: 500px;
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .text-block h1 {
+        font-size: 40px;
+    }
+    btn_container a {
+        font-size: 30px;
+    }
+
+        btn_container a :hover {
+            font-size: 32px;
+        }
+    .text-container {
+        font-size: 36px;
+    }
+    .products {
+        grid-template-columns: repeat(auto-fit, minmax(300px, auto));
+    }
+    .product-card {
+        width:95%;
+        height:70vh;
+    }
+    .product-name .product-description {
+        font-size: 14px;
+    }
+}

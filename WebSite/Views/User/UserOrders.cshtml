@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Order>
+@{
+}
+<div style="width:100%" class="mt-2">
+    <a href="/Identity/Account/Manage" class="btn btn-primary my-2">Back</a>
+
+    @if (Model != null && Model.Count() > 0)
+    {
+        @foreach (var order in Model)
+        {
+            <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <p><strong>Order Date:</strong> @order.OrderDate.ToString("dd-MM-yyyy")</p>
+                    </div>
+                    <div>
+                        <div class="d-block">
+                            <p><strong>Status:</strong> @order.Status.StatusName</p>
+                            <p><strong>Description:</strong> @order.Status.StatusDescription</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-block">
+                            <p><strong>Total Amount:</strong></p>
+                            <p style="font-weight:700">
+                                @(
+                                    order.OrderDetails
+                                    .Select(item => item.Product.DiscountedPrice.HasValue
+                                    ? item.Product.DiscountedPrice * item.Quantity
+                                    : item.Product.Price * item.Quantity)
+                                    .Sum()
+                                    )
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @if (order.OrderDetails != null && order.OrderDetails.Count > 0)
+                {
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Image</th>
+                                <th>Category</th>
+                                <th>Unit Price (INR)</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in order.OrderDetails)
+                            {
+                                <tr>
+                                    <td>@item.Product.Name</td>
+                                    @if (string.IsNullOrEmpty(item.Product.Photo))
+                                    {
+                                        <td>
+                                            <img src="/images/NoImage.png" style="width:80px;height:100px" alt="No Image" />
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            <img src="@item.Product.Photo" style="width:80px;height:100px" alt="Product Image" />
+                                        </td>
+                                    }
+                                    <td>@item.Product.Category.Name</td>
+                                    <td>
+                                        @if (@item.Product.DiscountedPrice.HasValue)
+                                        {
+                                            @(item.Product.DiscountedPrice)
+                                        }
+                                        else
+                                        {
+                                            @(item.Product.Price)
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (@item.Product.DiscountedPrice.HasValue)
+                                        {
+                                            @(item.Product.DiscountedPrice * item.Quantity)
+                                        }
+                                        else
+                                        {
+                                            @(item.Product.Price * item.Quantity)
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <script>
+            Swal.fire({
+                text: 'У Вас ще немає замовлень',
+                icon: 'info',
+                confirmButtonText: 'OK!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect the user to the desired page
+                    window.location.href = "/";
+                }
+            });
+        </script>
+    }
+</div>

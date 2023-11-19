@@ -1,0 +1,110 @@
+﻿@using WebSite.Models.NovaPoshta
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="form-group">
+        <label for="cityName">Введіть назву населеного пункту:</label>
+        <input type="text" class="form-control" id="cityName" name="cityName">
+    </div>
+    <button id="saveSelected" type="submit" class="btn btn-primary">Пошук</button>
+
+
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+    <h4>Результати пошуку:</h4>
+
+    <div id="searchResults">
+    </div>
+
+
+
+
+    <button type="button" id="checkcity" class="btn btn-primary">Зберегти вибрані</button>
+
+
+</body>
+
+
+ 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var saveSelectedButton = document.getElementById("saveSelected");
+        var cityNameInput = document.getElementById("cityName");
+        var searchResultsContainer = document.getElementById("searchResults");
+
+        saveSelectedButton.addEventListener("click", function () {
+            var cityName = cityNameInput.value;
+            $.ajax({
+                type: "POST",
+                url: '/NovaPoshta/SearchSettlements?cityName=' + cityName,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    searchResultsContainer.innerHTML = "";
+                    var selectElement = document.createElement("select");
+                    selectElement.name = "cityName";
+                    data.forEach(function (settlement) {
+                        // Створення <option> для кожного елементу в масиві даних
+                        var optionElement = document.createElement("option");
+                        optionElement.value = settlement.deliveryCity; // Значення опції
+
+                        // Встановлення тексту внутрішнього HTML для <option>
+                        optionElement.innerHTML = `${settlement.settlementTypeCode} ${settlement.mainDescription} ${settlement.area} область ${settlement.region} район`;
+
+                        // Додавання <option> до <select>
+                        selectElement.appendChild(optionElement);
+                    });
+                    searchResultsContainer.appendChild(selectElement);
+                },
+                error: function () {
+                    alert("Помилка при завантаженні даних.");
+                }
+            });
+        });
+
+
+        var selectedValues = [];
+        var checkcity = document.getElementById("checkcity");
+        checkcity.addEventListener("click", function () {
+            // Отримайте всі чекбокси з іменем "cityName"
+            var selectElement = document.querySelector('select[name="cityName"]');
+
+            if (selectElement) {
+                var selectedValue = selectElement.value;
+
+                $.ajax({
+                    type: "POST",
+                    url: '/NovaPoshta/SaveSettlements?cityRef=' + selectedValue,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        var selectElement = document.createElement("select");
+                        selectElement.name = "SiteKey";
+                        data.forEach(function (settlement) {
+                            // Створення <option> для кожного елементу в масиві даних
+                            var optionElement = document.createElement("option");
+                            optionElement.value = settlement.mainDescription; // Значення опції
+
+                            // Встановлення тексту внутрішнього HTML для <option>
+                            optionElement.innerHTML = `${settlement.description}`;
+
+                            // Додавання <option> до <select>
+                            selectElement.appendChild(optionElement);
+                        });
+                        searchResultsContainer.appendChild(selectElement);
+                    },
+                    error: function () {
+                        alert("Помилка при завантаженні даних.");
+                    }
+                });
+            } else {
+                alert("Виберіть спочатку пункт");
+            }
+        });
+    });
+</script>

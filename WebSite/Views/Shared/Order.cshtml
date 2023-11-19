@@ -1,0 +1,113 @@
+﻿@model Order
+<!-- The modal -->
+<div id="orderModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+        <form asp-action="Checkout">
+            <div class="text-center">
+                <h3>ОФОРМЛЕННЯ ЗАМОВЛЕННЯ</h3>
+                <h6>Введіть усю необхідну інформацію для доставки товару</h6>
+            </div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="adressDetail.FullName" class="control-label"></label>
+                <input asp-for="adressDetail.FullName" class="form-control" />
+                <span asp-validation-for="adressDetail.FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="adressDetail.PhoneNumber" class="control-label"></label>
+                <input type="number" asp-for="adressDetail.PhoneNumber" class="form-control" />
+                <span asp-validation-for="adressDetail.PhoneNumber" class="text-danger"></span>
+            </div>
+            <input type="text" class="form-control" id="cityName" name="cityName" placeholder="Введіть назву населеного пункту:">
+            <select asp-for="adressDetail.DeliverySity" type="hidden" id="selectedCity" value="" style="visibility:hidden">
+                <option value="" disabled>Виберіть місто</option>
+            </select>
+            <select asp-for="adressDetail.PostDepartment" type="hidden" id="selectedDepartment" value="" style="visibility:hidden">
+                <option value="" disabled>Виберіть відділення</option>
+            </select>
+            <div class="my-2 d-flex justify-content-between">
+                <span id="saveSelected" class="btn btn-primary mt-2">Пошук Населеного Пункту</span>
+                <span id="findDepartment" class="btn btn-primary mt-2">Пошук Відділення</span>
+            </div>
+            <div class="my-2 d-flex justify-content-center">
+                <button class="btn btn-primary" type="submit">Оформити замовлення</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var saveSelectedButton = document.getElementById("saveSelected"); //кнопка пошуку міста
+        var cityNameInput = document.getElementById("cityName");                //місто яке вводимо
+        var findDepartment = document.getElementById("findDepartment");  //кнопка пошуку відділення
+
+        saveSelectedButton.addEventListener("click", function () {
+            var cityName = cityNameInput.value;
+            $.ajax({
+                type: "POST",
+                url: '/NovaPoshta/SearchSettlements?cityName=' + cityName,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    // Отримайте посилання на існуючий елемент <select> за його id
+                    var selectElement = document.getElementById("selectedCity");
+                    // Очистіть всі поточні опції
+                    selectElement.innerHTML = "";
+
+                    data.forEach(function (settlement) {
+                        // Створіть нову опцію
+                        var optionElement = document.createElement("option");
+                        optionElement.value = settlement.settlementTypeCode + ' ' + settlement.mainDescription + ' ' + settlement.area + "область " + settlement.region + " район";
+                        optionElement.dataset.value = settlement.deliveryCity;
+                        // Встановлення тексту внутрішнього HTML для опції
+                        optionElement.innerHTML = `${settlement.settlementTypeCode} ${settlement.mainDescription} ${settlement.area} область ${settlement.region} район`;
+
+                        // Додайте опцію до існуючого елемента <select>
+                        selectElement.appendChild(optionElement);
+                    });
+                    selectElement.style.visibility = "visible"; // Set the visibility to "visible"
+                },
+                error: function () {
+                    alert("Помилка при завантаженні даних.");
+                }
+            });
+        });
+
+        findDepartment.addEventListener("click", function () {
+            var selectedCity = document.getElementById("selectedCity").querySelector('option:checked').dataset.value;
+            if (selectedCity) {
+                $.ajax({
+                    type: "POST",
+                    url: '/NovaPoshta/SaveSettlements?cityRef=' + selectedCity,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        var selectElement = document.getElementById("selectedDepartment"); // Отримуємо посилання на другий select
+
+                        selectElement.innerHTML = ""; // Очищаємо всі поточні опції
+
+                        data.forEach(function (settlement) {
+                            // Створюємо нову опцію для другого select
+                            var optionElement = document.createElement("option");
+                            optionElement.value = settlement.description; // Значення опції
+
+                            // Встановлення тексту внутрішнього HTML для опції
+                            optionElement.innerHTML = `${settlement.description}`;
+
+                            // Додаємо опцію до другого select
+                            selectElement.appendChild(optionElement);
+                        });
+                        selectElement.style.visibility = "visible";
+                    },
+                    error: function () {
+                        alert("Помилка при завантаженні даних.");
+                    }
+                });
+            } else {
+                alert("Виберіть спочатку місто");
+            }
+        });
+    });
+</script>

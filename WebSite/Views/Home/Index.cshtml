@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebProject</title>
+</head>
+<body>
+    <section class="full-width-container background-section text-center d-flex justify-content-center align-items-center p-0">
+        <div class="text-block">
+            <h1 class="text-white">
+                Not Your Ordinary
+                Clothes Store
+            </h1>
+            <div class="btn_container mt-5">
+                <a asp-action="Index" asp-controller="Products">BUY NOW</a>
+            </div>
+        </div>
+    </section>
+    <section class="container product-section">
+        <div class="text-center justify-content-center align-items-center pt-3 mb-3">
+            <div class="text-container">
+                <span>Hurry up to buy</span>
+            </div>
+        </div>
+        <!-- Pass the parameter showDiscountedOnly using ViewData -->
+        @Html.Partial("ProductList", true)
+    </section>
+
+</body>
+</html>
+

@@ -1,0 +1,130 @@
+﻿@using WebSite.Interfaces
+@using WebSite.Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity
+@inject IProductRealization _product
+@inject IUserRealization _user
+@inject UserManager<ApplicationUser> UserManager
+@model bool
+
+@{
+    // Отримайте параметр showDiscountedOnly з часткового представлення
+    var products = _product.ProductList(@Model);
+    var user = _user;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Shopeee</title>
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="sweetalert2.min.css">
+</head>
+<body>
+        <div class="products">
+            @foreach (var product in products)
+            {
+                <div class="product-card">
+                    @if (product.DiscountedPrice != null)
+                    {
+                        <div class="discount-badge">
+                            <span class="discount-text">On Sale</span>
+                        </div>
+                    }
+                    <div class="product-image">
+                        <img src="@product.Photo" alt="@product.Name" />
+                    </div>
+                    <div class="produnt-info">
+                        <div class="product-name">@product.Name</div>
+                        <div class="product-description">@product.Description</div>
+                        <div class="product-price">
+                            @if (product.DiscountedPrice != null)
+                            {
+                                <div class="price-wrapper">
+                                    <div class="original-price">@product.Price грн</div>
+                                    <div class="discounted-price">@product.DiscountedPrice грн</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="price-wrapper">
+                                    <div class="discounted-price">@product.Price грн</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+
+                    <div class="btn-group">
+                    <a asp-action="Details" asp-controller="Products" asp-route-id="@product.Id" class="btn btn-danger">Buy</a>
+                    <span data-id="@product.Id" id="addtofavouritebtn" data-islogin="@(_user.GetUserId() != null ? _user.GetUserId().ToString() : "null")" class="btn btn-danger @(user.IsLikedProductAsync(product.Id).Result ? "liked" : "")">
+                        @(user.IsLikedProductAsync(product.Id).Result ? "♥" : "♡")
+                    </span>
+                    </div>
+                </div>
+            }
+        </div>
+</body>
+</html>
+<script>
+    var addToFavouriteBtn = document.querySelectorAll("#addtofavouritebtn");
+    var stateMap = {};
+    for (let i = 0; i < addToFavouriteBtn.length; i++) {
+        var btn = addToFavouriteBtn[i];
+        btn.addEventListener("click", function () {
+            var isLiked = this.classList.contains("liked");
+            var productID = this.getAttribute("data-id"); // Отримуємо productID для поточного елемента
+            var isUserLogin = this.getAttribute("data-islogin");
+            if (!isUserLogin || isUserLogin === 'null') {
+                Swal.fire({
+                    text: 'Зареєструйтесь спочатку',
+                    icon: 'info',
+                    confirmButtonText: 'OK!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect the user to the desired page
+                        window.location.href = '/';
+                    }
+                });
+            }
+            stateMap[productID] = isLiked;
+            var currentBtn = this; // Зберігаємо поточний елемент
+
+            if (!stateMap[productID]) {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/Products/AddToFavourite?id=" + productID,
+                    success: function (data) {
+                        currentBtn.textContent = "♥";
+                        currentBtn.classList.add("liked");
+                        stateMap[productID] = true;
+                    },
+                    error: function () {
+                        alert("Помилка при завантаженні даних.");
+                    }
+                });
+            } else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/Products/RemoveFromFavourite?id=" + productID,
+                    success: function (data) {
+                        currentBtn.textContent = "♡";
+                        currentBtn.classList.remove("liked");
+                        stateMap[productID] = false;
+                    },
+                    error: function () {
+                        alert("Помилка при завантаженні даних.");
+                    }
+                });
+            }
+        });
+    }
+</script>

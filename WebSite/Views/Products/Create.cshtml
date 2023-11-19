@@ -1,0 +1,158 @@
+﻿@model WebSite.Models.ProductCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebProject</title>
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/create.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="login-root">
+        <div class="box-root flex-flex flex-direction--column" style="min-height: 100vh;flex-grow: 1;">
+            <div class="loginbackground box-background--white padding-top--64">
+                <div class="loginbackground-gridContainer">
+                    <div class="box-root flex-flex" style="grid-area: top / start / 8 / end;">
+                        <div class="box-root" style="background-image: linear-gradient(white 0%, rgb(247, 250, 252) 33%); flex-grow: 1;">
+                        </div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 4 / 2 / auto / 5;">
+                        <div class="box-root box-divider--light-all-2 animationLeftRight tans3s" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 6 / start / auto / 2;">
+                        <div class="box-root box-background--blue800" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 7 / start / auto / 4;">
+                        <div class="box-root box-background--blue animationLeftRight" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 8 / 4 / auto / 6;">
+                        <div class="box-root box-background--gray100 animationLeftRight tans3s" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 2 / 15 / auto / end;">
+                        <div class="box-root box-background--cyan200 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 3 / 14 / auto / end;">
+                        <div class="box-root box-background--blue animationRightLeft" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 4 / 17 / auto / 20;">
+                        <div class="box-root box-background--gray100 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+                    </div>
+                    <div class="box-root flex-flex" style="grid-area: 5 / 14 / auto / 17;">
+                        <div class="box-root box-divider--light-all-2 animationRightLeft tans3s" style="flex-grow: 1;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="box-root flex-flex flex-direction--column" style="flex-grow: 1; z-index: 9;">
+                <div class="box-root flex-flex flex-justifyContent--center">
+                    <h1><a>Create Product</a></h1>
+                </div>
+                <div class="formbg-outer">
+                    <div class="formbg">
+                        <div class="formbg-inner padding-horizontal--48">
+                            <form id="stripe-login" asp-action="Create" asp-controller="Products" >
+                                <div class="field padding-bottom--15">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="field padding-bottom--15">
+                                    <label asp-for="Description" class="control-label"></label>
+                                    <input asp-for="Description" class="form-control" />
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                                 <div class="field padding-bottom--15">
+                                    <label asp-for="Price" class="control-label"></label>
+                                    <input asp-for="Price" class="form-control" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                                <div class="field padding-bottom--15">
+                                    <label asp-for="DescountedPrice" class="control-label"></label>
+                                    <input asp-for="DescountedPrice" class="form-control" />
+                                    <span asp-validation-for="DescountedPrice" class="text-danger"></span>
+                                </div>
+                                <div class="field padding-bottom--15">
+                                    <label asp-for="Photo" class="control-label"></label>
+                                    <input asp-for="Photo" class="form-control" />
+                                    <span asp-validation-for="Photo" class="text-danger"></span>
+                                </div>
+                                <div class="field padding-bottom--15">
+                                    <label asp-for="CategoryId" class="control-label"></label>
+                                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                                </div>
+                                <div class="field padding-bottom--15">
+                                    <label asp-for="SizesInfo" class="control-label">Інформація по розмірам</label>
+                                    <div id="sizeInputs" class="d-flex">
+                                        <div class="size-input">
+                                            <select asp-for="SizesInfo[0].Size" class="form-control">
+                                                <option value="S">S</option>
+                                                <option value="M">M</option>
+                                                <option value="L">L</option>
+                                                <option value="XL">XL</option>
+                                                <option value="XXL">XXL</option>
+                                            </select>
+                                            <input asp-for="SizesInfo[0].Quantity" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field padding-bottom--24">
+                                    <input type="button" id="addSize" class="btn btn-info" value="ADD SIZE">
+                                </div>
+                                <div class="field padding-bottom--24">
+                                    <input type="submit" value="Create" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                 
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    var sizeCount = 1;
+    var maxSizeCount = 5; // Максимальна кількість дозволених розмірів
+    document.getElementById("addSize").addEventListener("click", function () {
+        if (sizeCount >= maxSizeCount) {
+            // Досягнуто максимальну кількість, не створюємо більше
+            return;
+        }
+        sizeCount++;
+        var sizeInputs = document.getElementById("sizeInputs");
+
+        var sizeInput = document.createElement("div");
+        sizeInput.classList.add("size-input");
+
+        var sizeSelect = document.createElement("select");
+        sizeSelect.name = `SizesInfo[${sizeCount - 1}].Size`;
+        sizeSelect.classList.add("form-control");
+
+        var sizes = ["S", "M", "L", "XL", "XXL"];
+        sizes.forEach(function (size) {
+            var option = document.createElement("option");
+            option.value = size;
+            option.text = size;
+            sizeSelect.appendChild(option);
+        });
+
+        var quantityInput = document.createElement("input");
+        quantityInput.name = `SizesInfo[${sizeCount - 1}].Quantity`;
+        quantityInput.classList.add("form-control");
+        quantityInput.type = "number";
+
+        sizeInput.appendChild(sizeSelect);
+        sizeInput.appendChild(quantityInput);
+
+        sizeInputs.appendChild(sizeInput);
+    });
+</script>
+
+
+
